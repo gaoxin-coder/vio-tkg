@@ -78,6 +78,11 @@ parameters:
     label: IP address of the keystone endpoint
   ssh_private_key:
     type: string
+  webserver:
+    type: string
+    label: webserver for download YAML files
+    default: 192.168.0.252
+
 
 resources:
   k8s_secgroup:
@@ -350,9 +355,9 @@ resources:
             mkdir -p /root/.kube
             cp /etc/kubernetes/admin.conf /root/.kube/config
             chown $(id -u):$(id -g) /root/.kube/config
-            kubectl --kubeconfig /etc/kubernetes/admin.conf apply -f http://192.168.0.252/cloud-controller-manager-roles.yaml
-            kubectl --kubeconfig /etc/kubernetes/admin.conf apply -f http://192.168.0.252/cloud-controller-manager-role-bindings.yaml
-            curl -O http://192.168.0.252/openstack-cloud-controller-manager-ds.yaml
+            kubectl --kubeconfig /etc/kubernetes/admin.conf apply -f http://$webserver/cloud-controller-manager-roles.yaml
+            kubectl --kubeconfig /etc/kubernetes/admin.conf apply -f http://$webserver/cloud-controller-manager-role-bindings.yaml
+            curl -O http://$webserver/openstack-cloud-controller-manager-ds.yaml
             sed -i 's?- --v=1?- --v=4?g' openstack-cloud-controller-manager-ds.yaml
             sed -i 's?latest?v1.14.0?g' openstack-cloud-controller-manager-ds.yaml
             kubectl --kubeconfig /etc/kubernetes/admin.conf apply -f openstack-cloud-controller-manager-ds.yaml
@@ -366,6 +371,7 @@ resources:
             $pod_network_cidr: { get_param: pod_network_cidr }
             $token: { get_attr: [generate_token, kube_token] }
             $lb_ip: { get_attr: [master_lb_fip, floating_ip_address] }
+            $webserver: { get_param: webserver }
 
   kubeadm_minion_init:
     type: OS::Heat::SoftwareConfig
