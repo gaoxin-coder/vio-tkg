@@ -6,6 +6,8 @@ heat_template_version: "2018-08-31"
 parameters:
   pod_network_cidr:
     type: string
+  webserver:
+    type: string
 
 resources:
   install_calico:
@@ -16,14 +18,14 @@ resources:
           template: |
             #!/bin/bash
             cd /root
-            curl -O http://192.168.0.252/calico_cni_v3.7.5.tar
-            curl -O http://192.168.0.252/calico_node_v3.7.5.tar
-            curl -O http://192.168.0.252/calico_kube-controllers_v3.7.5.tar
+            curl -O http://$webserver/calico_cni_v3.7.5.tar
+            curl -O http://$webserver/calico_node_v3.7.5.tar
+            curl -O http://$webserver/calico_kube-controllers_v3.7.5.tar
             docker load -i calico_cni_v3.7.5.tar
             docker load -i calico_kube-controllers_v3.7.5.tar
             docker load -i calico_node_v3.7.5.tar
             
-            curl -O http://192.168.0.252/calico.yaml
+            curl -O http://$webserver/calico.yaml
             sed -i -e "s?192.168.0.0/16?$pod_cidr?g" calico.yaml
             kubectl taint node k8scluster-master-main node.cloudprovider.kubernetes.io/uninitialized-
             kubectl --kubeconfig /etc/kubernetes/admin.conf apply -f /root/calico.yaml
@@ -31,6 +33,7 @@ resources:
             kubectl describe node k8scluster-master-main > /tmp/masternode.txt
           params:
             $pod_cidr: { get_param: pod_network_cidr }
+            $webserver: { get_param: webserver }
 
 outputs:
   OS::stack_id:

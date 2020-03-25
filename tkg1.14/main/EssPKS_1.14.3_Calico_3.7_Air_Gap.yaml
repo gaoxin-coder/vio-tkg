@@ -518,9 +518,12 @@ resources:
     type: ../lib/install_calico_3.7.yaml
     properties:
       pod_network_cidr: { get_param: pod_network_cidr }
+      webserver: { get_param: webserver }
 
   install_cinder_csi:
     type: ../lib/install_cinder_csi_1.14.0.yaml
+    properties:
+      webserver: { get_param: webserver }
 
   kube_master_init:
     type: OS::Heat::MultipartMime

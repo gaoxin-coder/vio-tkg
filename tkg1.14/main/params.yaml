@@ -16,3 +16,4 @@ parameters:
   minion_flavor: m1.large
   nameserver: 192.168.0.253
   mgmt_net_cidr: 20.0.0.0/24
+  webserver: 192.168.0.252
