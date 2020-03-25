@@ -3,57 +3,64 @@
 
 heat_template_version: "2018-08-31"
 
+parameters:
+  webserver:
+    type: string
+
 resources:
   esspks_install:
     type: OS::Heat::SoftwareConfig
     properties:
-      config: |
-        #!/bin/bash
-        cd /root
-        curl http://192.168.0.252/vmware-kubernetes-v1.14.3+vmware.1.tar.gz -o vmware-kubernetes-v1.14.3+vmware.1.tar.gz
-        tar -zxvf vmware-kubernetes-v1.14.3+vmware.1.tar.gz
-        cd /root/vmware-kubernetes-v1.14.3+vmware.1/kubernetes-v1.14.3+vmware.1/images
-        for f in *.gz; do cat $f | docker load; done
-        docker load -i /root/vmware-kubernetes-v1.14.3+vmware.1/coredns-v1.3.1+vmware.1/images/coredns-v1.3.1_vmware.1.tar.gz
-        docker load -i /root/vmware-kubernetes-v1.14.3+vmware.1/etcd-v3.3.10+vmware.1/images/etcd-v3.3.10_vmware.1.tar.gz
-        docker tag vmware/e2e-test:v1.14.3_vmware.1 vmware/e2e-test:v1.14.3
-        docker tag vmware/kube-apiserver:v1.14.3_vmware.1 vmware/kube-apiserver:v1.14.3
-        docker tag vmware/kube-controller-manager:v1.14.3_vmware.1 vmware/kube-controller-manager:v1.14.3
-        docker tag vmware/cloud-controller-manager:v1.14.3_vmware.1 vmware/cloud-controller-manager:v1.14.3
-        docker tag vmware/kube-scheduler:v1.14.3_vmware.1 vmware/kube-scheduler:v1.14.3
-        docker tag vmware/kube-proxy:v1.14.3_vmware.1 vmware/kube-proxy:v1.14.3
-        docker tag vmware/coredns:v1.3.1_vmware.1 vmware/coredns:1.3.1
-        docker tag vmware/etcd:v3.3.10_vmware.1 vmware/etcd:3.3.10
+      config: 
+        str_replace:
+          template: |
+            #!/bin/bash
+            cd /root
+            curl http://192.168.0.252/vmware-kubernetes-v1.14.3+vmware.1.tar.gz -o vmware-kubernetes-v1.14.3+vmware.1.tar.gz
+            tar -zxvf vmware-kubernetes-v1.14.3+vmware.1.tar.gz
+            cd /root/vmware-kubernetes-v1.14.3+vmware.1/kubernetes-v1.14.3+vmware.1/images
+            for f in *.gz; do cat $f | docker load; done
+            docker load -i /root/vmware-kubernetes-v1.14.3+vmware.1/coredns-v1.3.1+vmware.1/images/coredns-v1.3.1_vmware.1.tar.gz
+            docker load -i /root/vmware-kubernetes-v1.14.3+vmware.1/etcd-v3.3.10+vmware.1/images/etcd-v3.3.10_vmware.1.tar.gz
+            docker tag vmware/e2e-test:v1.14.3_vmware.1 vmware/e2e-test:v1.14.3
+            docker tag vmware/kube-apiserver:v1.14.3_vmware.1 vmware/kube-apiserver:v1.14.3
+            docker tag vmware/kube-controller-manager:v1.14.3_vmware.1 vmware/kube-controller-manager:v1.14.3
+            docker tag vmware/cloud-controller-manager:v1.14.3_vmware.1 vmware/cloud-controller-manager:v1.14.3
+            docker tag vmware/kube-scheduler:v1.14.3_vmware.1 vmware/kube-scheduler:v1.14.3
+            docker tag vmware/kube-proxy:v1.14.3_vmware.1 vmware/kube-proxy:v1.14.3
+            docker tag vmware/coredns:v1.3.1_vmware.1 vmware/coredns:1.3.1
+            docker tag vmware/etcd:v3.3.10_vmware.1 vmware/etcd:3.3.10
 
-        curl -O http://192.168.0.252/calico_cni_v3.7.5.tar
-        curl -O http://192.168.0.252/calico_node_v3.7.5.tar
-        curl -O http://192.168.0.252/calico_kube-controllers_v3.7.5.tar
-        docker load -i calico_cni_v3.7.5.tar
-        docker load -i calico_kube-controllers_v3.7.5.tar
-        docker load -i calico_node_v3.7.5.tar
+            curl -O http://192.168.0.252/calico_cni_v3.7.5.tar
+            curl -O http://192.168.0.252/calico_node_v3.7.5.tar
+            curl -O http://192.168.0.252/calico_kube-controllers_v3.7.5.tar
+            docker load -i calico_cni_v3.7.5.tar
+            docker load -i calico_kube-controllers_v3.7.5.tar
+            docker load -i calico_node_v3.7.5.tar
 
-        curl -O http://192.168.0.252/k8scloudprovider_openstack-cloud-controller-manager_v1.14.0.tar
-        docker load -i k8scloudprovider_openstack-cloud-controller-manager_v1.14.0.tar
-        curl -O http://192.168.0.252/docker.io_k8scloudprovider_cinder-csi-plugin_v1.14.0.tar
-        docker load -i docker.io_k8scloudprovider_cinder-csi-plugin_v1.14.0.tar
+            curl -O http://192.168.0.252/k8scloudprovider_openstack-cloud-controller-manager_v1.14.0.tar
+            docker load -i k8scloudprovider_openstack-cloud-controller-manager_v1.14.0.tar
+            curl -O http://192.168.0.252/docker.io_k8scloudprovider_cinder-csi-plugin_v1.14.0.tar
+            docker load -i docker.io_k8scloudprovider_cinder-csi-plugin_v1.14.0.tar
 
-        curl -O http://192.168.0.252/quay.io_k8scsi_csi-node-driver-registrar_v1.1.0.tar
-        docker load -i quay.io_k8scsi_csi-node-driver-registrar_v1.1.0.tar
-        curl -O http://192.168.0.252/quay.io_k8scsi_csi-attacher_v1.1.1.tar
-        docker load -i quay.io_k8scsi_csi-attacher_v1.1.1.tar
-        curl -O http://192.168.0.252/quay.io_k8scsi_csi-provisioner_v1.2.0.tar
-        docker load -i quay.io_k8scsi_csi-provisioner_v1.2.0.tar
-        curl -O http://192.168.0.252/quay.io_k8scsi_csi-snapshotter_v1.2.0.tar
-        docker load -i quay.io_k8scsi_csi-snapshotter_v1.2.0.tar
+            curl -O http://192.168.0.252/quay.io_k8scsi_csi-node-driver-registrar_v1.1.0.tar
+            docker load -i quay.io_k8scsi_csi-node-driver-registrar_v1.1.0.tar
+            curl -O http://192.168.0.252/quay.io_k8scsi_csi-attacher_v1.1.1.tar
+            docker load -i quay.io_k8scsi_csi-attacher_v1.1.1.tar
+            curl -O http://192.168.0.252/quay.io_k8scsi_csi-provisioner_v1.2.0.tar
+            docker load -i quay.io_k8scsi_csi-provisioner_v1.2.0.tar
+            curl -O http://192.168.0.252/quay.io_k8scsi_csi-snapshotter_v1.2.0.tar
+            docker load -i quay.io_k8scsi_csi-snapshotter_v1.2.0.tar
 
-        swapoff -a
-        cd /root/vmware-kubernetes-v1.14.3+vmware.1/debs
-        dpkg -i *.deb
-        apt-get install -f -y
-        sudo rm /var/lib/dpkg/lock-frontend
-        sudo apt-get install -f
-        systemctl enable kubelet.service
-
+            swapoff -a
+            cd /root/vmware-kubernetes-v1.14.3+vmware.1/debs
+            dpkg -i *.deb
+            apt-get install -f -y
+            sudo rm /var/lib/dpkg/lock-frontend
+            sudo apt-get install -f
+            systemctl enable kubelet.service
+          params:
+            $webserver: { get_param: webserver }
 
 outputs:
   OS::stack_id:

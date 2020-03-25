@@ -279,6 +279,8 @@ resources:
 
   kube_install:
     type: ../lib/esspks_install_1.14.3.yaml
+    properties:
+      webserver: { get_param: webserver}
 
   kube_cloud_config:
     type: ../lib/kube_cloud_config_calico_ip_access.yaml
@@ -363,7 +365,8 @@ resources:
             kubectl --kubeconfig /etc/kubernetes/admin.conf apply -f openstack-cloud-controller-manager-ds.yaml
             source /usr/share/bash-completion/bash_completion
             echo "source /usr/share/bash-completion/bash_completion" >> ~/.bashrc
-            git clone https://github.com/ahmetb/kubectx /opt/kubectx
+            curl -O http://$webserver/kubectx.tar.gz
+            tar xvzf kubectx.tar.gz
             ln -s /opt/kubectx/kubens /usr/local/bin/kubens
 
           params:
