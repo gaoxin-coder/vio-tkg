@@ -1,0 +1,48 @@
+# Copyright © 2019 VMware, Inc. All Rights Reserved.
+# SPDX-License-Identifier: BSD-2-Clause
+
+heat_template_version: "2018-08-31"
+
+resources:
+  install_cinder_csi:
+    type: OS::Heat::SoftwareConfig
+    properties:
+      config: |
+        #!/bin/bash
+        cd /root
+        kubectl --kubeconfig /etc/kubernetes/admin.conf apply -f http://192.168.0.252/csi-attacher-rbac.yaml
+        kubectl --kubeconfig /etc/kubernetes/admin.conf apply -f http://192.168.0.252/csi-nodeplugin-rbac.yaml
+        kubectl --kubeconfig /etc/kubernetes/admin.conf apply -f http://192.168.0.252/csi-provisioner-rbac.yaml
+        kubectl --kubeconfig /etc/kubernetes/admin.conf apply -f http://192.168.0.252/csi-snapshotter-rbac.yaml
+        kubectl --kubeconfig /etc/kubernetes/admin.conf create clusterrolebinding csi-attacher-admin --serviceaccount=kube-system:csi-attacher --clusterrole=cluster-admin
+        curl -O http://192.168.0.252/csi-nodeplugin-cinderplugin.yaml
+        curl -O http://192.168.0.252/csi-attacher-cinderplugin.yaml
+        curl -O http://192.168.0.252/csi-provisioner-cinderplugin.yaml
+        curl -O http://192.168.0.252/csi-snapshotter-cinderplugin.yaml
+        sed -i 's?containers:?hostNetwork: true\n      containers:?g' csi-attacher-cinderplugin.yaml
+        sed -i 's?containers:?hostNetwork: true\n      containers:?g' csi-provisioner-cinderplugin.yaml
+        sed -i 's?containers:?hostNetwork: true\n      containers:?g' csi-snapshotter-cinderplugin.yaml
+        sed -i 's?latest?v1.14.0?g' csi-attacher-cinderplugin.yaml
+        sed -i 's?latest?v1.14.0?g' csi-provisioner-cinderplugin.yaml
+        sed -i 's?latest?v1.14.0?g' csi-snapshotter-cinderplugin.yaml
+        sed -i 's?latest?v1.14.0?g' csi-nodeplugin-cinderplugin.yaml
+        sed -i 's?1.0.1?1.1.1?g' csi-attacher-cinderplugin.yaml
+        sed -i 's?1.0.1?1.2.0?g' csi-provisioner-cinderplugin.yaml
+        sed -i 's?1.0.1?1.2.0?g' csi-snapshotter-cinderplugin.yaml
+        sed -i 's?1.0.1?1.1.0?g' csi-nodeplugin-cinderplugin.yaml
+        sed -i 's?volumeMounts:?volumeMounts:\n            - mountPath: /etc/ssl/certs\n              name: ca-certs\n              readOnly: true?g' csi-attacher-cinderplugin.yaml
+        sed -i 's?volumeMounts:?volumeMounts:\n            - mountPath: /etc/ssl/certs\n              name: ca-certs\n              readOnly: true?g' csi-provisioner-cinderplugin.yaml
+        sed -i 's?volumeMounts:?volumeMounts:\n            - mountPath: /etc/ssl/certs\n              name: ca-certs\n              readOnly: true?g' csi-snapshotter-cinderplugin.yaml
+        sed -i 's?volumeMounts:?volumeMounts:\n            - mountPath: /etc/ssl/certs\n              name: ca-certs\n              readOnly: true?g' csi-nodeplugin-cinderplugin.yaml
+        sed -i 's?volumes:?volumes:\n        - hostPath:\n            path: /etc/ssl/certs\n            type: DirectoryOrCreate\n          name: ca-certs?g' csi-attacher-cinderplugin.yaml
+        sed -i 's?volumes:?volumes:\n        - hostPath:\n            path: /etc/ssl/certs\n            type: DirectoryOrCreate\n          name: ca-certs?g' csi-provisioner-cinderplugin.yaml
+        sed -i 's?volumes:?volumes:\n        - hostPath:\n            path: /etc/ssl/certs\n            type: DirectoryOrCreate\n          name: ca-certs?g' csi-snapshotter-cinderplugin.yaml
+        sed -i 's?volumes:?volumes:\n        - hostPath:\n            path: /etc/ssl/certs\n            type: DirectoryOrCreate\n          name: ca-certs?g' csi-nodeplugin-cinderplugin.yaml
+        kubectl --kubeconfig /etc/kubernetes/admin.conf apply -f csi-nodeplugin-cinderplugin.yaml
+        kubectl --kubeconfig /etc/kubernetes/admin.conf apply -f csi-attacher-cinderplugin.yaml
+        kubectl --kubeconfig /etc/kubernetes/admin.conf apply -f csi-provisioner-cinderplugin.yaml
+        kubectl --kubeconfig /etc/kubernetes/admin.conf apply -f csi-snapshotter-cinderplugin.yaml
+
+outputs:
+  OS::stack_id:
+    value: { get_resource: install_cinder_csi }
