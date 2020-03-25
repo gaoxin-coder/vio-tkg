@@ -1,0 +1,31 @@
+# Copyright © 2019 VMware, Inc. All Rights Reserved.
+# SPDX-License-Identifier: BSD-2-Clause
+
+heat_template_version: "2018-08-31"
+
+resources:
+  docker_init:
+    type: OS::Heat::SoftwareConfig
+    properties:
+      config: |
+        #!/bin/bash
+        cat << EOF > /etc/apt/sources.list
+        deb http://mirrors.163.com/ubuntu/ xenial main restricted universe multiverse
+        deb http://mirrors.163.com/ubuntu/ xenial-security main restricted universe multiverse
+        deb http://mirrors.163.com/ubuntu/ xenial-updates main restricted universe multiverse
+        deb http://mirrors.163.com/ubuntu/ xenial-proposed main restricted universe multiverse
+        deb http://mirrors.163.com/ubuntu/ xenial-backports main restricted universe multiverse
+        deb-src http://mirrors.163.com/ubuntu/ xenial main restricted universe multiverse
+        deb-src http://mirrors.163.com/ubuntu/ xenial-security main restricted universe multiverse
+        deb-src http://mirrors.163.com/ubuntu/ xenial-updates main restricted universe multiverse
+        deb-src http://mirrors.163.com/ubuntu/ xenial-proposed main restricted universe multiverse
+        deb-src http://mirrors.163.com/ubuntu/ xenial-backports main restricted universe multiverse
+        EOF
+
+        apt-get update
+        apt-get install -y docker.io socat ebtables
+        systemctl enable docker.service
+
+outputs:
+  OS::stack_id:
+    value: { get_resource: docker_init }
