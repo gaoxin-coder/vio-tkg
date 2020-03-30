@@ -11,11 +11,12 @@ VIO=6.0.0.1
 部署步骤：  
   
 1. 创建http server（推荐使用CentOS VM，为了方便说明，假定IP地址为192.168.0.10），将repos-img和repos-yaml文件上传到http server。 http server配置方式如下：  
-  • 安装HTTP  
-  yum install -y httpd  
-  systemctl start httpd  
-  systemctl enable httpd  
-  #curl 127.0.0.1（检查http server状态是否正常）  
+
+    • 安装HTTP  
+    yum install -y httpd  
+    systemctl start httpd  
+    systemctl enable httpd  
+    #curl 127.0.0.1（检查http server状态是否正常）  
   
     • 关闭防火墙  
     systemctl stop firewalld  
@@ -35,3 +36,6 @@ VIO=6.0.0.1
     yum install -y centos-release-openstack-stein  
     yum list python-openstack*  
     yum install -y python-openstackclient  
+
+调试方式：
+
