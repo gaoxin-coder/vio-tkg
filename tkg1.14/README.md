@@ -3,7 +3,7 @@ CNI=Calico 3.75
 VIO=6.0.0.1  
 
 一共4个文件夹  
-•	main  - heat stack运行的脚本。
+•	main  - heat stack运行的脚本  
 •	lib  - 各种后台脚本  
 •	repos-img  - 运行过程中需要的各种image文件  
 •	repos-yaml  - 运行过程中需要的各种yaml文件  
