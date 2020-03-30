@@ -33,6 +33,7 @@ VIO=6.0.0.1
     systemctl restart httpd  
   
 2. 创建OpenStack client（推荐使用CentOS VM，假定IP地址为192.168.0.20），确认OpenStack Client可以和VIO正常通信。 OpenStack Client配置命令行如下：  
+    yum update  
     yum install -y centos-release-openstack-stein  
     yum list python-openstack*  
     yum install -y python-openstackclient  
