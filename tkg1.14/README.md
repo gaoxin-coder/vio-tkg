@@ -10,7 +10,7 @@ VIO=6.0.0.1
   
 部署步骤：  
   
-创建http server（推荐使用CentOS VM，为了方便说明，假定IP地址为192.168.0.10），将repos-img和repos-yaml文件上传到http server。 http server配置方式如下：  
+1. 创建http server（推荐使用CentOS VM，为了方便说明，假定IP地址为192.168.0.10），将repos-img和repos-yaml文件上传到http server。 http server配置方式如下：  
   • 安装HTTP  
   yum install -y httpd  
   systemctl start httpd  
@@ -31,7 +31,7 @@ mv /etc/httpd/conf.d/welcome.conf /tmp
 • 重启HTTP服务  
 systemctl restart httpd  
   
-创建OpenStack client（推荐使用CentOS VM，假定IP地址为192.168.0.20），确认OpenStack Client可以和VIO正常通信。 OpenStack Client配置命令行如下：  
+2. 创建OpenStack client（推荐使用CentOS VM，假定IP地址为192.168.0.20），确认OpenStack Client可以和VIO正常通信。 OpenStack Client配置命令行如下：  
 yum install -y centos-release-openstack-stein  
 yum list python-openstack*  
 yum install -y python-openstackclient  
